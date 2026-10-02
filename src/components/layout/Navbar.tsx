@@ -47,18 +47,21 @@ export function Navbar() {
     return () => clearInterval(interval);
   }, []);
 
-  // Close mobile menu whenever navigation occurs
-  useEffect(() => {
+  const toggleMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
+  };
+
+  const closeMenu = () => {
     setIsMobileMenuOpen(false);
-  }, [pathname]);
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/90 backdrop-blur-md text-slate-100">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-800 bg-slate-950/95 backdrop-blur-md text-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Operational Hub Badge */}
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2.5 group">
+            <Link href="/" onClick={closeMenu} className="flex items-center gap-2.5 group">
               <div className="w-9 h-9 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 group-hover:bg-sky-500/20 transition-all">
                 <Plane className="w-5 h-5 -rotate-45" />
               </div>
@@ -75,8 +78,8 @@ export function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Navigation links */}
-            <nav className="hidden md:flex items-center space-x-1">
+            {/* Desktop Navigation links (visible on lg screens >= 1024px) */}
+            <nav className="hidden lg:flex items-center space-x-1">
               {NAV_ITEMS.map((item) => {
                 const Icon = item.icon;
                 const isActive =
@@ -114,9 +117,9 @@ export function Navbar() {
             </div>
 
             {/* Feed Status Indicator */}
-            <div className="hidden xs:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-medium text-emerald-400">
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-medium text-emerald-400">
               <Radio className="w-3 h-3 animate-ping" />
-              <span className="hidden sm:inline">RAMP FEED ACTIVE</span>
+              <span>RAMP FEED ACTIVE</span>
             </div>
 
             {/* User Session Profile Badge */}
@@ -124,35 +127,35 @@ export function Navbar() {
               <div className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
                 <UserCheck className="w-4 h-4" />
               </div>
-              <div className="hidden lg:flex flex-col text-left">
+              <div className="hidden xl:flex flex-col text-left">
                 <span className="text-xs font-medium text-slate-200">Ops Dispatch</span>
                 <span className="text-[10px] font-mono text-sky-400">OPS_MANAGER</span>
               </div>
             </div>
 
-            {/* Mobile Hamburger Toggle Button */}
+            {/* Hamburger Toggle Button (visible on screens < 1024px) */}
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              className="md:hidden p-2 rounded-lg bg-slate-900 border border-slate-800 text-slate-400 hover:text-white hover:bg-slate-800 transition-all focus:outline-none focus:ring-1 focus:ring-sky-500"
+              onClick={toggleMenu}
+              className="lg:hidden relative z-50 p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-200 hover:text-white hover:bg-slate-800 transition-all focus:outline-none focus:ring-2 focus:ring-sky-500 cursor-pointer"
               aria-label="Toggle navigation menu"
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
-                <X className="w-5 h-5 text-white" />
+                <X className="w-5 h-5 text-sky-400" />
               ) : (
-                <Menu className="w-5 h-5" />
+                <Menu className="w-5 h-5 text-white" />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Drawer / Dropdown Menu */}
+      {/* Responsive Dropdown Drawer (visible when isMobileMenuOpen is true) */}
       {isMobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-800/80 bg-slate-950/95 backdrop-blur-xl px-4 pt-3 pb-5 space-y-4 animate-in slide-in-from-top-2 duration-200 shadow-2xl">
-          {/* Station Clock & Status on mobile */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-xs">
+        <div className="lg:hidden w-full border-t border-slate-800 bg-slate-950 px-4 pt-3 pb-6 space-y-4 shadow-2xl">
+          {/* Station Clock & Status in mobile drawer */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-slate-900/90 border border-slate-800 text-xs">
             <div className="flex items-center gap-2 font-mono">
               <Clock className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
               <span className="text-slate-400">NBO Station:</span>
@@ -160,14 +163,14 @@ export function Navbar() {
                 {stationTime || "14:12:00"}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-400">
+            <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-400 font-mono">
               <Radio className="w-3 h-3 animate-ping" />
               <span>FEED LIVE</span>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col space-y-1">
+          <nav className="flex flex-col space-y-1.5">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive =
@@ -178,12 +181,12 @@ export function Navbar() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={closeMenu}
                   className={cn(
-                    "flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all",
+                    "flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-medium transition-all",
                     isActive
                       ? "bg-slate-800 text-sky-400 border border-slate-700 font-semibold"
-                      : "text-slate-300 hover:text-white hover:bg-slate-900"
+                      : "text-slate-300 hover:text-white hover:bg-slate-900 border border-transparent"
                   )}
                 >
                   <Icon className="w-4 h-4 text-sky-400" />
@@ -194,14 +197,19 @@ export function Navbar() {
           </nav>
 
           {/* User profile info in mobile menu */}
-          <div className="pt-3 border-t border-slate-800/80 flex items-center gap-3 px-1">
-            <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
-              <UserCheck className="w-4 h-4 text-sky-400" />
+          <div className="pt-3 border-t border-slate-800 flex items-center justify-between px-1">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
+                <UserCheck className="w-4 h-4 text-sky-400" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-xs font-semibold text-white">Ops Dispatcher</span>
+                <span className="text-[10px] font-mono text-sky-400">ROLE: OPS_MANAGER</span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-white">Ops Dispatcher</span>
-              <span className="text-[10px] font-mono text-sky-400">ROLE: OPS_MANAGER</span>
-            </div>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              STATION CH 1
+            </span>
           </div>
         </div>
       )}
