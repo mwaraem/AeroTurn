@@ -1,4 +1,4 @@
-import { Airport, Aircraft, Flight, Turnaround, Incident, OperationsSummary } from "@/types";
+import { Airport, Aircraft, Turnaround, Incident, OperationsSummary } from "@/types";
 
 export const MOCK_AIRPORTS: Airport[] = [
   {
